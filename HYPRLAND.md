@@ -10,7 +10,11 @@ windowrulev2 = noblur, class:^(one.alynx.showmethekey)$
 windowrulev2 = noshadow, class:^(one.alynx.showmethekey)$
 windowrulev2 = noborder, class:^(one.alynx.showmethekey)$
 windowrulev2 = nofocus, class:^(one.alynx.showmethekey)$
-windowrulev2 = move 100%-820 100%-100, class:^(one.alynx.showmethekey)$
+windowrulev2 = opaque, class:^(one.alynx.showmethekey)$
+windowrulev2 = nodim, class:^(one.alynx.showmethekey)$
+windowrulev2 = noanim, class:^(one.alynx.showmethekey)$
+windowrulev2 = rounding 0, class:^(one.alynx.showmethekey)$
+windowrulev2 = move 100%-820 100%-120, class:^(one.alynx.showmethekey)$
 ```
 
 This will:

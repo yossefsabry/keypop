@@ -18,7 +18,7 @@
 
 // Configuration
 #define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 80
+#define WINDOW_HEIGHT 100
 #define PADDING 20
 #define MAX_DISPLAY_LEN 256
 #define HIDE_TIMEOUT_MS 2000
@@ -111,20 +111,20 @@ static void redraw(struct client_state *state) {
     cairo_t *cr = cairo_create(cs);
     
     // Draw rounded rectangle background
-    const double r = 12;
+    const double r = 0;  // No rounded corners (let Hyprland control this)
     cairo_new_sub_path(cr);
     cairo_arc(cr, WINDOW_WIDTH - r, r, r, -M_PI/2, 0);
     cairo_arc(cr, WINDOW_WIDTH - r, WINDOW_HEIGHT - r, r, 0, M_PI/2);
     cairo_arc(cr, r, WINDOW_HEIGHT - r, r, M_PI/2, M_PI);
     cairo_arc(cr, r, r, r, M_PI, 3*M_PI/2);
     cairo_close_path(cr);
-    cairo_set_source_rgba(cr, 0.1, 0.1, 0.1, 0.95);
+    cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.80);
     cairo_fill(cr);
     
     // Draw text if buffer has content
     if (state->display_len > 0) {
-        cairo_select_font_face(cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-        cairo_set_font_size(cr, 42);
+        cairo_select_font_face(cr, "Monospace", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+        cairo_set_font_size(cr, 60);
         cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
         
         cairo_text_extents_t extents;
@@ -137,7 +137,7 @@ static void redraw(struct client_state *state) {
         char overflow_buf[MAX_DISPLAY_LEN + 4];
         
         if (extents.width > max_width) {
-            // Find substring that fits with "..." prefix
+            // Find substring that fits with "..." prefix (don't modify original buffer)
             for (size_t i = 1; i < state->display_len; i++) {
                 if ((state->display_buf[i] & 0xC0) != 0x80) {  // UTF-8 boundary
                     snprintf(overflow_buf, sizeof(overflow_buf), "...%s", 
@@ -145,11 +145,6 @@ static void redraw(struct client_state *state) {
                     cairo_text_extents(cr, overflow_buf, &extents);
                     if (extents.width <= max_width) {
                         display_text = overflow_buf;
-                        
-                        // Shift buffer to free memory (remove old text)
-                        memmove(state->display_buf, state->display_buf + i, 
-                                state->display_len - i + 1);
-                        state->display_len -= i;
                         break;
                     }
                 }
@@ -161,7 +156,8 @@ static void redraw(struct client_state *state) {
         double x = WINDOW_WIDTH - PADDING - extents.width;
         if (x < PADDING) x = PADDING;
         
-        cairo_move_to(cr, x, (WINDOW_HEIGHT + extents.height) / 2);
+        double y = WINDOW_HEIGHT / 2.0 - extents.y_bearing - extents.height / 2.0 + 5;
+        cairo_move_to(cr, x, y);
         cairo_show_text(cr, display_text);
     }
     
@@ -315,6 +311,7 @@ static void handle_key(void *data, uint32_t key, uint32_t state_val) {
         
         if (keysym == XKB_KEY_BackSpace) {
             buf_backspace(state);
+            buf_append(state, "⌫");  // Show backspace symbol
         } else if (keysym == XKB_KEY_space) {
             buf_append(state, " ");
         } else if (keysym == XKB_KEY_Shift_L || keysym == XKB_KEY_Shift_R ||
