@@ -28,6 +28,8 @@ struct client_state {
     struct wl_compositor *compositor;
     struct wl_shm *shm;
     struct xdg_wm_base *xdg_wm_base;
+    struct wl_seat *seat;
+    struct wl_keyboard *wl_keyboard;
     struct wl_surface *surface;
     struct xdg_surface *xdg_surface;
     struct xdg_toplevel *xdg_toplevel;
@@ -39,6 +41,12 @@ struct client_state {
     struct xkb_keymap *xkb_map;
     struct xkb_state *xkb_state;
     
+    // Key Repeat State
+    int32_t repeat_rate;   // chars per second
+    int32_t repeat_delay;  // ms
+    uint32_t repeat_key;   // currently holding key (raw code)
+    guint repeat_timer_id; // GLib timer source ID
+
     // Display state
     char display_buf[MAX_DISPLAY_LEN];
     size_t display_len;

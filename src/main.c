@@ -117,6 +117,10 @@ int main(int argc, char *argv[]) {
     state.text_color[3] = 1.0; // Default White
 
     state.font_size = 65;
+    
+    // Default repeat settings (will be updated by Wayland)
+    state.repeat_rate = 25;
+    state.repeat_delay = 600;
 
     int opt;
     while ((opt = getopt(argc, argv, "b:c:s:g:o:h")) != -1) {
