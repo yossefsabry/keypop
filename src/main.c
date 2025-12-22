@@ -7,8 +7,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/mman.h>
-#include <errno.h>
-#include <math.h>
 #include <wayland-client.h>
 #include <cairo.h>
 #include <poll.h>
@@ -148,8 +146,11 @@ static void redraw(struct client_state *state) {
         cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
         
         cairo_text_extents_t extents;
+        cairo_font_extents_t font_extents;
         const int max_width = WINDOW_WIDTH - PADDING - RIGHT_PADDING;
         
+        // Get font metrics for stable vertical alignment
+        cairo_font_extents(cr, &font_extents);
         cairo_text_extents(cr, state->display_buf, &extents);
         
         const char *display_text = state->display_buf;
@@ -172,7 +173,14 @@ static void redraw(struct client_state *state) {
         cairo_text_extents(cr, display_text, &extents);
         double x = WINDOW_WIDTH - RIGHT_PADDING - extents.width;
         if (x < PADDING) x = PADDING;
-        double y = WINDOW_HEIGHT / 2.0 - extents.y_bearing - extents.height / 2.0 + TOP_BOTTOM_PADDING;
+        
+        // Use Font Metrics for Vertical Alignment
+        // This ensures the baseline is consistent regardless of which characters are shown.
+        // y = (WINDOW_HEIGHT - font_height) / 2 + ascent + offset
+        // - 7 : it's a preference alignt u can change to fit u'r View
+        double y = (WINDOW_HEIGHT - font_extents.height) / 2.0 + font_extents.ascent 
+            + TOP_BOTTOM_PADDING - 7.0;
+        
         cairo_move_to(cr, x, y);
         cairo_show_text(cr, display_text);
     }
