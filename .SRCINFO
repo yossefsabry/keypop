@@ -1,4 +1,4 @@
-pkgbase = keypop-git
+pkgbase = keypop
 	pkgdesc = A simple Wayland key display application overlay
 	pkgver = 1.0.0.r0.gGIT
 	pkgrel = 1
@@ -19,4 +19,4 @@ pkgbase = keypop-git
 	source = git+https://github.com/yossefsabry/keypop.git
 	sha256sums = SKIP
 
-pkgname = keypop-git
+pkgname = keypop
