@@ -1,6 +1,6 @@
 # Maintainer: Yossef Sabry <yossefsabry112@gmail.com>
 pkgname=keypop
-pkgver=1.0.0.r0.gGIT
+pkgver=1.0
 pkgrel=1
 pkgdesc="A simple Wayland key display application overlay"
 arch=('x86_64')
