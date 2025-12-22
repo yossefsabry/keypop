@@ -75,7 +75,13 @@ static void process_key_action(struct client_state *state, uint32_t key) {
         clock_gettime(CLOCK_MONOTONIC, &state->last_key_time);
 
         if (keysym == XKB_KEY_BackSpace) {
-            buf_backspace(state);
+            if (state->ctrl_pressed) {
+                buf_delete_word(state);
+            } else {
+                buf_backspace(state);
+            }
+        } else if (state->ctrl_pressed && keysym == XKB_KEY_w) {
+            buf_delete_word(state);
         } else if (!is_mod) {
             char combined_buf[64] = {0};
             if (state->ctrl_pressed) strcat(combined_buf, "Ctrl+");
