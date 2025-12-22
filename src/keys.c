@@ -90,18 +90,72 @@ static void process_key_action(struct client_state *state, uint32_t key) {
             
             const char *sym = get_key_symbol(keysym);
             char key_str[32] = {0};
-            if (sym) strcpy(key_str, sym);
-            else if (keysym == XKB_KEY_space) strcpy(key_str, " ");
+            
+            // First check if we have a named symbol
+            if (sym) {
+                strcpy(key_str, sym);
+            } 
+            // Special case for space (render as space character)
+            else if (keysym == XKB_KEY_space) {
+                strcpy(key_str, " ");
+            }
+            // Try to get printable ASCII characters
+            else if (keysym >= 0x20 && keysym <= 0x7E) {
+                snprintf(key_str, sizeof(key_str), "%c", (char)keysym);
+            }
+            // For other keys, try UTF-8 conversion
             else {
-                if (keysym >= 0x20 && keysym <= 0x7E) snprintf(key_str, sizeof(key_str), "%c", (char)keysym);
-                else {
-                    xkb_state_key_get_utf8(state->xkb_state, xkb_keycode, key_str, sizeof(key_str));
-                    if (strlen(key_str) == 0 || (unsigned char)key_str[0] < 32)
-                        if (keysym < 256 && keysym >= 32) snprintf(key_str, sizeof(key_str), "%c", (char)keysym);
+                xkb_state_key_get_utf8(state->xkb_state, xkb_keycode, key_str, sizeof(key_str));
+                // If UTF-8 failed or returned control character, try keysym as char if in range
+                if (strlen(key_str) == 0 || (unsigned char)key_str[0] < 32) {
+                    if (keysym < 256 && keysym >= 32) {
+                        snprintf(key_str, sizeof(key_str), "%c", (char)keysym);
+                    }
+                    // Otherwise just ignore this key (don't display anything)
+                    else {
+                        key_str[0] = '\0';
+                    }
                 }
             }
+            
             strcat(combined_buf, key_str);
             if (strlen(combined_buf) > 0) {
+                // Combo highlighting: Detect important shortcuts and set colors
+                state->use_combo_color = 0; // Reset
+                
+                // Important shortcuts (Green #52C41A)
+                if (state->ctrl_pressed && !state->alt_pressed && !state->super_pressed) {
+                    if (keysym == XKB_KEY_c || keysym == XKB_KEY_v || 
+                        keysym == XKB_KEY_x || keysym == XKB_KEY_z) {
+                        state->current_combo_color[0] = 0.32; // R
+                        state->current_combo_color[1] = 0.77; // G
+                        state->current_combo_color[2] = 0.10; // B
+                        state->current_combo_color[3] = 1.0;  // A
+                        state->use_combo_color = 1;
+                    } else {
+                        // Regular Ctrl combos (Blue #5DADE2)
+                        state->current_combo_color[0] = 0.36;
+                        state->current_combo_color[1] = 0.68;
+                        state->current_combo_color[2] = 0.89;
+                        state->current_combo_color[3] = 1.0;
+                        state->use_combo_color = 1;
+                    }
+                } else if (state->alt_pressed && !state->ctrl_pressed) {
+                    // Alt combos (Purple #AF7AC5)
+                    state->current_combo_color[0] = 0.69;
+                    state->current_combo_color[1] = 0.48;
+                    state->current_combo_color[2] = 0.77;
+                    state->current_combo_color[3] = 1.0;
+                    state->use_combo_color = 1;
+                } else if (state->super_pressed) {
+                    // Super combos (Orange #F39C12)
+                    state->current_combo_color[0] = 0.95;
+                    state->current_combo_color[1] = 0.61;
+                    state->current_combo_color[2] = 0.07;
+                    state->current_combo_color[3] = 1.0;
+                    state->use_combo_color = 1;
+                }
+                
                 if (state->seg_count > 0) {
                     int last_len = state->seg_lengths[state->seg_count - 1];
                     int this_len = strlen(combined_buf);

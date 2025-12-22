@@ -76,6 +76,20 @@ struct client_state {
     int width;
     int height;
 
+    // Combo highlighting
+    double current_combo_color[4]; // Color for current combo (if special)
+    unsigned int use_combo_color : 1; // Whether to use combo color
+    
+    // Mouse state
+    struct {
+        unsigned int lmb : 1;
+        unsigned int rmb : 1;
+        unsigned int mmb : 1;
+        int x;
+        int y;
+        struct timespec last_click_time;
+    } mouse;
+
     // GLib Main Loop
     GMainLoop *loop;
 };

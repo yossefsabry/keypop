@@ -158,19 +158,280 @@ static void draw_icon(cairo_t *cr, const char *key_name, double x, double y, dou
         cairo_line_to(cr, cx + w, cy);
         cairo_line_to(cr, cx + w - size*0.15, cy + size*0.15);
         cairo_stroke(cr);
-    } 
-    // Add more if needed (Esc, Backspace)
+    
+    } else if (strcmp(key_name, "Backspace") == 0 || strcmp(key_name, "BackSpace") == 0) {
+        // Backspace: ⌫ (arrow with X)
+        double cx = x + size * 0.5;
+        double cy = y - size * 0.3;
+        double w = size * 0.25;
+        
+        // Arrow pointing left
+        cairo_move_to(cr, cx + w, cy);
+        cairo_line_to(cr, cx - w, cy);
+        cairo_move_to(cr, cx - w + size*0.12, cy - size*0.12);
+        cairo_line_to(cr, cx - w, cy);
+        cairo_line_to(cr, cx - w + size*0.12, cy + size*0.12);
+        
+        // Small X on the right
+        cairo_move_to(cr, cx + w - size*0.1, cy - size*0.08);
+        cairo_line_to(cr, cx + w, cy + size*0.08);
+        cairo_move_to(cr, cx + w, cy - size*0.08);
+        cairo_line_to(cr, cx + w - size*0.1, cy + size*0.08);
+        cairo_stroke(cr);
+        
+    } else if (strcmp(key_name, "Del") == 0 || strcmp(key_name, "Delete") == 0) {
+        // Delete: forward arrow with X
+        double cx = x + size * 0.5;
+        double cy = y - size * 0.3;
+        double w = size * 0.25;
+        
+        // Arrow pointing right
+        cairo_move_to(cr, cx - w, cy);
+        cairo_line_to(cr, cx + w, cy);
+        cairo_move_to(cr, cx + w - size*0.12, cy - size*0.12);
+        cairo_line_to(cr, cx + w, cy);
+        cairo_line_to(cr, cx + w - size*0.12, cy + size*0.12);
+        
+        // X on left
+        cairo_move_to(cr, cx - w, cy - size*0.08);
+        cairo_line_to(cr, cx - w + size*0.1, cy + size*0.08);
+        cairo_move_to(cr, cx - w + size*0.1, cy - size*0.08);
+        cairo_line_to(cr, cx - w, cy + size*0.08);
+        cairo_stroke(cr);
+        
+    } else if (strncmp(key_name, "F", 1) == 0 && strlen(key_name) >= 2 && strlen(key_name) <= 3) {
+        // Function keys F1-F12: Draw in rounded box with text
+        double cx = x + size * 0.5;
+        double cy = y - size * 0.3;
+        double box_w = size * 0.45;
+        double box_h = size * 0.35;
+        
+        // Rounded box
+        cairo_set_line_width(cr, size * 0.05);
+        cairo_rectangle(cr, cx - box_w/2, cy - box_h/2, box_w, box_h);
+        cairo_stroke(cr);
+        
+        // Text (will be drawn as regular text, not icon path)
+        // For now, just draw the outline
+        cairo_restore(cr);
+        return; // Let text rendering handle F-key label
+        
+    } else if (strcmp(key_name, "Caps") == 0) {
+        // Caps Lock: A with up arrow
+        double cx = x + size * 0.5;
+        double cy = y - size * 0.3;
+        double h = size * 0.25;
+        
+        // Up arrow above
+        cairo_move_to(cr, cx, cy - h);
+        cairo_line_to(cr, cx - size*0.1, cy - h + size*0.12);
+        cairo_move_to(cr, cx, cy - h);
+        cairo_line_to(cr, cx + size*0.1, cy - h + size*0.12);
+        
+        // "A" shape below
+        cairo_move_to(cr, cx - size*0.15, cy + h);
+        cairo_line_to(cr, cx, cy);
+        cairo_line_to(cr, cx + size*0.15, cy + h);
+        cairo_move_to(cr, cx - size*0.08, cy + h*0.4);
+        cairo_line_to(cr, cx + size*0.08, cy + h*0.4);
+        cairo_stroke(cr);
+        
+    } else if (strcmp(key_name, "Home") == 0) {
+        // Home: House icon
+        double cx = x + size * 0.5;
+        double cy = y - size * 0.3;
+        double w = size * 0.25;
+        
+        // Roof (triangle)
+        cairo_move_to(cr, cx - w, cy);
+        cairo_line_to(cr, cx, cy - w);
+        cairo_line_to(cr, cx + w, cy);
+        // Base (rectangle)
+        cairo_move_to(cr, cx - w*0.8, cy);
+        cairo_line_to(cr, cx - w*0.8, cy + w);
+        cairo_line_to(cr, cx + w*0.8, cy + w);
+        cairo_line_to(cr, cx + w*0.8, cy);
+        cairo_stroke(cr);
+        
+    } else if (strcmp(key_name, "End") == 0) {
+        // End: Corner arrow pointing down-right
+        double cx = x + size * 0.5;
+        double cy = y - size * 0.3;
+        double w = size * 0.25;
+        
+        // L-shape arrow
+        cairo_move_to(cr, cx - w, cy - w);
+        cairo_line_to(cr, cx - w, cy + w);
+        cairo_line_to(cr, cx + w, cy + w);
+        // Arrow head
+        cairo_move_to(cr, cx + w - size*0.12, cy + w - size*0.12);
+        cairo_line_to(cr, cx + w, cy + w);
+        cairo_move_to(cr, cx + w, cy + w);
+        cairo_line_to(cr, cx + w - size*0.12, cy + w + size*0.12);
+        cairo_stroke(cr);
+        
+    } else if (strcmp(key_name, "PgUp") == 0) {
+        // Page Up: Double up arrows
+        double cx = x + size * 0.5;
+        double cy = y - size * 0.3;
+        double h = size * 0.15;
+        
+        // First up arrow
+        cairo_move_to(cr, cx, cy - h);
+        cairo_line_to(cr, cx - size*0.12, cy - h + size*0.12);
+        cairo_move_to(cr, cx, cy - h);
+        cairo_line_to(cr, cx + size*0.12, cy - h + size*0.12);
+        
+        // Second up arrow below
+        cairo_move_to(cr, cx, cy + h);
+        cairo_line_to(cr, cx - size*0.12, cy + h + size*0.12);
+        cairo_move_to(cr, cx, cy + h);
+        cairo_line_to(cr, cx + size*0.12, cy + h + size*0.12);
+        cairo_stroke(cr);
+        
+    } else if (strcmp(key_name, "PgDn") == 0) {
+        // Page Down: Double down arrows
+        double cx = x + size * 0.5;
+        double cy = y - size * 0.3;
+        double h = size * 0.15;
+        
+        // First down arrow
+        cairo_move_to(cr, cx, cy - h);
+        cairo_line_to(cr, cx - size*0.12, cy - h - size*0.12);
+        cairo_move_to(cr, cx, cy - h);
+        cairo_line_to(cr, cx + size*0.12, cy - h - size*0.12);
+        
+        // Second down arrow below
+        cairo_move_to(cr, cx, cy + h);
+        cairo_line_to(cr, cx - size*0.12, cy + h - size*0.12);
+        cairo_move_to(cr, cx, cy + h);
+        cairo_line_to(cr, cx + size*0.12, cy + h - size*0.12);
+        cairo_stroke(cr);
+        
+    } else if (strcmp(key_name, "Esc") == 0) {
+        // Esc: Circle with X
+        double cx = x + size * 0.5;
+        double cy = y - size * 0.3;
+        double r = size * 0.25;
+        
+        cairo_arc(cr, cx, cy, r, 0, 2 * M_PI);
+        cairo_stroke(cr);
+        
+        // X inside
+        cairo_set_line_width(cr, size * 0.06);
+        cairo_move_to(cr, cx - r*0.5, cy - r*0.5);
+        cairo_line_to(cr, cx + r*0.5, cy + r*0.5);
+        cairo_move_to(cr, cx + r*0.5, cy - r*0.5);
+        cairo_line_to(cr, cx - r*0.5, cy + r*0.5);
+        cairo_stroke(cr);
+        
+    } else if (strcmp(key_name, "Play") == 0) {
+        // Play: Triangle
+        double cx = x + size * 0.5;
+        double cy = y - size * 0.3;
+        double w = size * 0.2;
+        
+        cairo_move_to(cr, cx - w, cy - w);
+        cairo_line_to(cr, cx + w, cy);
+        cairo_line_to(cr, cx - w, cy + w);
+        cairo_close_path(cr);
+        cairo_stroke(cr);
+        
+    } else if (strcmp(key_name, "Pause") == 0) {
+        // Pause: Two vertical bars
+        double cx = x + size * 0.5;
+        double cy = y - size * 0.3;
+        double h = size * 0.3;
+        double w = size * 0.06;
+        
+        cairo_rectangle(cr, cx - size*0.12, cy - h/2, w, h);
+        cairo_rectangle(cr, cx + size*0.06, cy - h/2, w, h);
+        cairo_stroke(cr);
+        
+    } else if (strcmp(key_name, "Vol+") == 0 || strcmp(key_name, "Bri+") == 0) {
+        // Volume/Brightness up: Speaker/sun with +
+        double cx = x + size * 0.5;
+        double cy = y - size * 0.3;
+        
+        // + symbol
+        cairo_move_to(cr, cx - size*0.15, cy);
+        cairo_line_to(cr, cx + size*0.15, cy);
+        cairo_move_to(cr, cx, cy - size*0.15);
+        cairo_line_to(cr, cx, cy + size*0.15);
+        cairo_stroke(cr);
+        
+    } else if (strcmp(key_name, "Vol-") == 0 || strcmp(key_name, "Bri-") == 0) {
+        // Volume/Brightness down: - symbol
+        double cx = x + size * 0.5;
+        double cy = y - size * 0.3;
+        
+        cairo_move_to(cr, cx - size*0.2, cy);
+        cairo_line_to(cr, cx + size*0.2, cy);
+        cairo_stroke(cr);
+        
+    } else if (strcmp(key_name, "Mute") == 0) {
+        // Mute: Speaker with X
+        double cx = x + size * 0.5;
+        double cy = y - size * 0.3;
+        
+        // Speaker trapezoid
+        cairo_move_to(cr, cx - size*0.2, cy - size*0.1);
+        cairo_line_to(cr, cx - size*0.05, cy - size*0.2);
+        cairo_line_to(cr, cx - size*0.05, cy + size*0.2);
+        cairo_line_to(cr, cx - size*0.2, cy + size*0.1);
+        cairo_close_path(cr);
+        cairo_stroke(cr);
+        
+        // X through it
+        cairo_move_to(cr, cx + size*0.05, cy - size*0.15);
+        cairo_line_to(cr, cx + size*0.2, cy + size*0.15);
+        cairo_move_to(cr, cx + size*0.2, cy - size*0.15);
+        cairo_line_to(cr, cx + size*0.05, cy + size*0.15);
+        cairo_stroke(cr);
+    }
 
     cairo_restore(cr);
 }
 
 static int is_icon_key(const char *key) {
-    return (strcmp(key, "Enter") == 0 ||
-            strcmp(key, "Left") == 0 ||
-            strcmp(key, "Right") == 0 ||
-            strcmp(key, "Up") == 0 ||
-            strcmp(key, "Down") == 0 ||
-            strcmp(key, "Tab") == 0);
+    // Check exact matches
+    if (strcmp(key, "Enter") == 0 ||
+        strcmp(key, "Left") == 0 ||
+        strcmp(key, "Right") == 0 ||
+        strcmp(key, "Up") == 0 ||
+        strcmp(key, "Down") == 0 ||
+        strcmp(key, "Tab") == 0 ||
+        strcmp(key, "Backspace") == 0 ||
+        strcmp(key, "BackSpace") == 0 ||
+        strcmp(key, "Del") == 0 ||
+        strcmp(key, "Delete") == 0 ||
+        strcmp(key, "Caps") == 0 ||
+        strcmp(key, "Home") == 0 ||
+        strcmp(key, "End") == 0 ||
+        strcmp(key, "PgUp") == 0 ||
+        strcmp(key, "PgDn") == 0 ||
+        strcmp(key, "Play") == 0 ||
+        strcmp(key, "Pause") == 0 ||
+        strcmp(key, "Prev") == 0 ||
+        strcmp(key, "Next") == 0 ||
+        strcmp(key, "Vol+") == 0 ||
+        strcmp(key, "Vol-") == 0 ||
+        strcmp(key, "Bri+") == 0 ||
+        strcmp(key, "Bri-") == 0 ||
+        strcmp(key, "Mute") == 0) {
+        return 1;
+    }
+    
+    // Check F-keys (F1-F12)
+    if (key[0] == 'F' && strlen(key) >= 2 && strlen(key) <= 3) {
+        // Could be F1-F12
+        int fnum = atoi(key + 1);
+        if (fnum >= 1 && fnum <= 12) {
+            return 1;
+        }
+    }
+    
+    return 0;
 }
 
 void redraw(struct client_state *state) {
@@ -283,7 +544,18 @@ void redraw(struct client_state *state) {
     double current_x = state->width - RIGHT_PADDING - width_so_far; 
     if (current_x < PADDING) current_x = PADDING; // Should match max_width logic approx
     
+    // Use combo color for the LAST segment if use_combo_color is set
+    const double *draw_color = state->text_color;
+    
     for (int i = start_seg; i < state->seg_count; i++) {
+        // Apply combo color to the last segment only
+        if (i == state->seg_count - 1 && state->use_combo_color) {
+            draw_color = state->current_combo_color;
+            cairo_set_source_rgba(cr, draw_color[0], draw_color[1], draw_color[2], draw_color[3]);
+        } else {
+            cairo_set_source_rgba(cr, state->text_color[0], state->text_color[1], state->text_color[2], state->text_color[3]);
+        }
+        
         // Draw Mods/Text
         cairo_move_to(cr, current_x, y_pos);
         cairo_show_text(cr, seg_mods[i]);
@@ -292,11 +564,39 @@ void redraw(struct client_state *state) {
         cairo_text_extents(cr, seg_mods[i], &ext);
         current_x += ext.x_advance;
         
-        // Draw Icon if needed
+        // Draw Icon if needed (use combo color if applicable)
         if (seg_is_icon[i]) {
-            draw_icon(cr, seg_keys[i], current_x, y_pos, icon_size, state->text_color);
+            if (i == state->seg_count - 1 && state->use_combo_color) {
+                draw_icon(cr, seg_keys[i], current_x, y_pos, icon_size, state->current_combo_color);
+            } else {
+                draw_icon(cr, seg_keys[i], current_x, y_pos, icon_size, state->text_color);
+            }
             current_x += icon_size;
         }
+    }
+    
+    // Draw mouse click display (bottom of window)
+    if (state->mouse.lmb || state->mouse.rmb || state->mouse.mmb) {
+        char mouse_info[128];
+        char buttons[32] = "";
+        
+        if (state->mouse.lmb) strcat(buttons, "LMB ");
+        if (state->mouse.rmb) strcat(buttons, "RMB ");
+        if (state->mouse.mmb) strcat(buttons, "MMB ");
+        
+        snprintf(mouse_info, sizeof(mouse_info), "%s (%d, %d)", buttons, state->mouse.x, state->mouse.y);
+        
+        cairo_set_source_rgba(cr, state->text_color[0], state->text_color[1], state->text_color[2], state->text_color[3]);
+        cairo_select_font_face(cr, "Monospace", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+        cairo_set_font_size(cr, state->font_size * 0.5); // Smaller text for mouse
+        
+        cairo_text_extents_t mouse_ext;
+        cairo_text_extents(cr, mouse_info, &mouse_ext);
+        double mouse_x = (state->width - mouse_ext.width) / 2.0; // Center
+        double mouse_y = state->height - 10;
+        
+        cairo_move_to(cr, mouse_x, mouse_y);
+        cairo_show_text(cr, mouse_info);
     }
 
     cairo_destroy(cr);
