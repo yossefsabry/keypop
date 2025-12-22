@@ -142,7 +142,22 @@ void handle_key(void *data, uint32_t key, uint32_t state_val) {
     struct client_state *state = data;
     uint32_t xkb_keycode = key + 8;
 
+    // Check if it's a modifier key
+    // We need to peek at the keysym before updating state in process_key_action
+    // Note: This relies on the current state mapping.
+    xkb_keysym_t raw_sym = xkb_state_key_get_one_sym(state->xkb_state, xkb_keycode);
+    int is_mod_key = is_modifier(raw_sym);
+
     if (state_val == LIBINPUT_KEY_STATE_PRESSED) {
+        // Guard: If it's a modifier and we think it's already pressed, ignore this repeat.
+        // This handles case where libinput sends repeats OR we messed up logic.
+        if (is_mod_key) {
+             if ((raw_sym == XKB_KEY_Shift_L || raw_sym == XKB_KEY_Shift_R) && state->shift_pressed) return;
+             if ((raw_sym == XKB_KEY_Control_L || raw_sym == XKB_KEY_Control_R) && state->ctrl_pressed) return;
+             if ((raw_sym == XKB_KEY_Alt_L || raw_sym == XKB_KEY_Alt_R) && state->alt_pressed) return;
+             if ((raw_sym == XKB_KEY_Super_L || raw_sym == XKB_KEY_Super_R) && state->super_pressed) return;
+        }
+
         // Cancel existing timer if any
         if (state->repeat_timer_id) {
             g_source_remove(state->repeat_timer_id);
@@ -152,8 +167,10 @@ void handle_key(void *data, uint32_t key, uint32_t state_val) {
         // Process the key immediately
         process_key_action(state, key);
         
-        // Setup repeat if enabled
-        if (state->repeat_rate > 0 && state->repeat_delay > 0) {
+        // Setup repeat if enabled (but NOT for modifiers)
+        // process_key_action already updated xkb_state, so we can just query the keysym
+        xkb_keysym_t keysym = xkb_state_key_get_one_sym(state->xkb_state, xkb_keycode);
+        if (!is_modifier(keysym) && state->repeat_rate > 0 && state->repeat_delay > 0) {
             state->repeat_key = key;
             state->repeat_timer_id = g_timeout_add(state->repeat_delay, repeat_delay_done, state);
         }
