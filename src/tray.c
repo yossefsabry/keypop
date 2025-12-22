@@ -62,7 +62,7 @@ int tray_init(struct client_state *state) {
     
     char cwd[1024];
     if (getcwd(cwd, sizeof(cwd))) {
-        char icon_path[1024];
+        char icon_path[2048];
         snprintf(icon_path, sizeof(icon_path), "%s/public", cwd); 
         app_indicator_set_icon_theme_path(ctx.indicator, icon_path);
         app_indicator_set_icon(ctx.indicator, "key_pop"); 

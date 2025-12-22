@@ -8,8 +8,8 @@
 #include "xdg-shell-client-protocol.h"
 #include "input.h"
 
-#define WINDOW_WIDTH 840
-#define WINDOW_HEIGHT 130
+#define DEFAULT_WIDTH 840
+#define DEFAULT_HEIGHT 130
 #define PADDING 10
 #define TOP_BOTTOM_PADDING 5
 #define RIGHT_PADDING 60
@@ -60,6 +60,13 @@ struct client_state {
     unsigned int alt_pressed : 1;
     unsigned int shift_pressed : 1;
     unsigned int super_pressed : 1;
+
+    // Configuration
+    double bg_color[4];  // r, g, b, a
+    double text_color[4]; // r, g, b, a
+    int font_size;
+    int width;
+    int height;
 
     // GLib Main Loop
     GMainLoop *loop;

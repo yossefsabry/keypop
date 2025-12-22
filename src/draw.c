@@ -11,8 +11,8 @@
 void redraw(struct client_state *state) {
     if (!state->surface || !state->window_visible) return;
 
-    const int stride = WINDOW_WIDTH * 4;
-    const size_t size = stride * WINDOW_HEIGHT;
+    const int stride = state->width * 4;
+    const size_t size = stride * state->height;
     
     int fd = allocate_shm_file(size);
     if (fd == -1) return;
@@ -22,11 +22,11 @@ void redraw(struct client_state *state) {
     
     struct wl_shm_pool *pool = wl_shm_create_pool(state->shm, fd, size);
     struct wl_buffer *buffer = wl_shm_pool_create_buffer(pool, 0, 
-        WINDOW_WIDTH, WINDOW_HEIGHT, stride, WL_SHM_FORMAT_ARGB8888);
+        state->width, state->height, stride, WL_SHM_FORMAT_ARGB8888);
     wl_shm_pool_destroy(pool);
     close(fd);
     
-    cairo_surface_t *cs = cairo_image_surface_create_for_data(data, CAIRO_FORMAT_ARGB32, WINDOW_WIDTH, WINDOW_HEIGHT, stride);
+    cairo_surface_t *cs = cairo_image_surface_create_for_data(data, CAIRO_FORMAT_ARGB32, state->width, state->height, stride);
     cairo_t *cr = cairo_create(cs);
     
     // Clear
@@ -38,23 +38,23 @@ void redraw(struct client_state *state) {
     // Background
     const double r = 0;
     cairo_new_sub_path(cr);
-    cairo_arc(cr, WINDOW_WIDTH - r, r, r, -M_PI/2, 0);
-    cairo_arc(cr, WINDOW_WIDTH - r, WINDOW_HEIGHT - r, r, 0, M_PI/2);
-    cairo_arc(cr, r, WINDOW_HEIGHT - r, r, M_PI/2, M_PI);
+    cairo_arc(cr, state->width - r, r, r, -M_PI/2, 0);
+    cairo_arc(cr, state->width - r, state->height - r, r, 0, M_PI/2);
+    cairo_arc(cr, r, state->height - r, r, M_PI/2, M_PI);
     cairo_arc(cr, r, r, r, M_PI, 3*M_PI/2);
     cairo_close_path(cr);
-    cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.60);
+    cairo_set_source_rgba(cr, state->bg_color[0], state->bg_color[1], state->bg_color[2], state->bg_color[3]);
     cairo_fill(cr);
     
     // Text
     if (state->display_len > 0) {
         cairo_select_font_face(cr, "Monospace", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-        cairo_set_font_size(cr, 65);
-        cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
+        cairo_set_font_size(cr, state->font_size);
+        cairo_set_source_rgba(cr, state->text_color[0], state->text_color[1], state->text_color[2], state->text_color[3]);
         
         cairo_text_extents_t extents;
         cairo_font_extents_t font_extents;
-        const int max_width = WINDOW_WIDTH - PADDING - RIGHT_PADDING;
+        const int max_width = state->width - PADDING - RIGHT_PADDING;
         
         cairo_font_extents(cr, &font_extents);
         cairo_text_extents(cr, state->display_buf, &extents);
@@ -76,9 +76,9 @@ void redraw(struct client_state *state) {
         }
         
         cairo_text_extents(cr, display_text, &extents);
-        double x = WINDOW_WIDTH - RIGHT_PADDING - extents.width;
+        double x = state->width - RIGHT_PADDING - extents.width;
         if (x < PADDING) x = PADDING;
-        double y = (WINDOW_HEIGHT - font_extents.height) / 2.0 + font_extents.ascent + TOP_BOTTOM_PADDING - 7.0;
+        double y = (state->height - font_extents.height) / 2.0 + font_extents.ascent + TOP_BOTTOM_PADDING - 7.0;
         
         cairo_move_to(cr, x, y);
         cairo_show_text(cr, display_text);
@@ -89,7 +89,7 @@ void redraw(struct client_state *state) {
     munmap(data, size);
     
     wl_surface_attach(state->surface, buffer, 0, 0);
-    wl_surface_damage_buffer(state->surface, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    wl_surface_damage_buffer(state->surface, 0, 0, state->width, state->height);
     wl_surface_commit(state->surface);
     
     if (state->buffer) wl_buffer_destroy(state->buffer);

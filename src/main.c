@@ -19,6 +19,7 @@ static inline long time_diff_ms(const struct timespec *start, const struct times
 
 // GLib callbacks
 static gboolean on_wayland_event(GIOChannel *source, GIOCondition condition, gpointer data) {
+    (void)source;
     struct client_state *state = data;
     if (condition & G_IO_IN) {
         if (wl_display_dispatch(state->display) == -1) return FALSE;
@@ -28,6 +29,7 @@ static gboolean on_wayland_event(GIOChannel *source, GIOCondition condition, gpo
 }
 
 static gboolean on_input_event(GIOChannel *source, GIOCondition condition, gpointer data) {
+    (void)source;
     struct client_state *state = data;
     if (condition & G_IO_IN) {
         input_dispatch(state->input);
@@ -62,11 +64,93 @@ static gboolean on_timer_tick(gpointer data) {
     return TRUE; // Continue calling
 }
 
-int main(void) {
+// Helper to parse hex color
+// Helper to parse hex color
+static void parse_color(const char *hex, double *rgba) {
+    if (!hex) return;
+    if (hex[0] == '#') hex++; // skip # if present
+    
+    int r = 0, g = 0, b = 0, a = 255;
+    int len = strlen(hex);
+    
+    if (len == 6) {
+        sscanf(hex, "%02x%02x%02x", &r, &g, &b);
+    } else if (len == 8) {
+        sscanf(hex, "%02x%02x%02x%02x", &r, &g, &b, &a);
+    }
+    
+    rgba[0] = r / 255.0;
+    rgba[1] = g / 255.0;
+    rgba[2] = b / 255.0;
+    rgba[3] = a / 255.0;
+}
+
+static void print_usage(const char *prog) {
+    printf("Usage: %s [options]\n", prog);
+    printf("Options:\n");
+    printf("  -b <color>   Set background color (e.g. #000000 or 000000)\n");
+    printf("  -c <color>   Set text color (e.g. #FFFFFF or FFFFFF)\n");
+    printf("  -s <size>    Set font size (default: 65)\n");
+    printf("  -g <WxH>     Set window size (default: 840x130)\n");
+    printf("  -o <opacity> Set background opacity (0.0 - 1.0)\n");
+    printf("  -h           Show this help\n");
+}
+
+int main(int argc, char *argv[]) {
     struct client_state state = {0};
     state.running = 1;
     state.overlay_enabled = 1; // Default to shown
     clock_gettime(CLOCK_MONOTONIC, &state.last_key_time);
+    
+    // Default config
+    state.width = DEFAULT_WIDTH;
+    state.height = DEFAULT_HEIGHT;
+
+    state.bg_color[0] = 0.0;
+    state.bg_color[1] = 0.0;
+    state.bg_color[2] = 0.0;
+    state.bg_color[3] = 0.6; // Default 60% alpha black
+
+    state.text_color[0] = 1.0;
+    state.text_color[1] = 1.0;
+    state.text_color[2] = 1.0;
+    state.text_color[3] = 1.0; // Default White
+
+    state.font_size = 65;
+
+    int opt;
+    while ((opt = getopt(argc, argv, "b:c:s:g:o:h")) != -1) {
+        switch (opt) {
+            case 'b':
+                parse_color(optarg, state.bg_color);
+                break;
+            case 'c':
+                parse_color(optarg, state.text_color);
+                break;
+            case 's':
+                state.font_size = atoi(optarg);
+                if (state.font_size < 10) state.font_size = 10;
+                break;
+            case 'g':
+                sscanf(optarg, "%dx%d", &state.width, &state.height);
+                if (state.width < 100) state.width = 100;
+                if (state.height < 50) state.height = 50;
+                break;
+            case 'o': {
+                float opacity = atof(optarg);
+                if (opacity < 0.0f) opacity = 0.0f;
+                if (opacity > 1.0f) opacity = 1.0f;
+                state.bg_color[3] = opacity;
+                break;
+            }
+            case 'h':
+                print_usage(argv[0]);
+                return 0;
+            default:
+                print_usage(argv[0]);
+                return 1;
+        }
+    }
 
     // Initialize subsystems
     if (wl_setup_connect(&state) != 0) {
