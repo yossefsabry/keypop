@@ -1,4 +1,4 @@
-# Maintainer: Yossef Sabry <yossefsabry112@gmail.com>
+# Maintainer: Yossef Sabry <yossefsabry66@gmail.com>
 pkgname=keypop
 pkgver=1.0
 pkgrel=1
