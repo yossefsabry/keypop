@@ -1,4 +1,4 @@
-project('showmethekey', 'c',
+project('keypop', 'c',
   version : '0.1',
   default_options : ['warning_level=3', 'c_std=c11'])
 
@@ -42,7 +42,7 @@ foreach p : protocols
   )
 endforeach
 
-executable('showmethekey',
+executable('keypop',
   sources : ['src/main.c', 'src/input.c'] + wl_protos_src + wl_protos_headers,
   dependencies : [
     dep_wayland_client,

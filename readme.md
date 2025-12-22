@@ -1,4 +1,4 @@
-# Show Me The Key (Wayland)
+# Keypop (Wayland)
 
 A simple key display application for Wayland compositors like Hyprland.
 
@@ -24,14 +24,14 @@ sudo make install
 
 Requires access to input devices:
 ```bash
-sudo -E ./showmethekey
+sudo -E ./keypop
 ```
 
 Or add your user to the `input` group:
 ```bash
 sudo usermod -aG input $USER
 # Log out and back in, then:
-./showmethekey
+./keypop
 ```
 
 ## Hyprland Configuration
@@ -39,20 +39,20 @@ sudo usermod -aG input $USER
 Add to `~/.config/hypr/hyprland.conf`:
 
 ```conf
-# Show Me The Key - always on top, no effects
-windowrulev2 = float, class:^(one.alynx.showmethekey)$
-windowrulev2 = pin, class:^(one.alynx.showmethekey)$
-windowrulev2 = noblur, class:^(one.alynx.showmethekey)$
-windowrulev2 = noshadow, class:^(one.alynx.showmethekey)$
-windowrulev2 = noborder, class:^(one.alynx.showmethekey)$
-windowrulev2 = nofocus, class:^(one.alynx.showmethekey)$
-windowrulev2 = move 100%-820 100%-100, class:^(one.alynx.showmethekey)$
+# Keypop - always on top, no effects
+windowrulev2 = float, class:^(keypop)$
+windowrulev2 = pin, class:^(keypop)$
+windowrulev2 = noblur, class:^(keypop)$
+windowrulev2 = noshadow, class:^(keypop)$
+windowrulev2 = noborder, class:^(keypop)$
+windowrulev2 = nofocus, class:^(keypop)$
+windowrulev2 = move 100%-820 100%-100, class:^(keypop)$
 ```
 
 ## Exit
 
 - Press `Ctrl+C` in terminal
-- Or kill the process: `pkill showmethekey`
+- Or kill the process: `pkill keypop`
 - Or close via Hyprland: `hyprctl dispatch killactive` with window focused
 
 ## Dependencies

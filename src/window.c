@@ -27,7 +27,7 @@ void window_create(struct client_state *state) {
     
     state->xdg_toplevel = xdg_surface_get_toplevel(state->xdg_surface);
     xdg_toplevel_add_listener(state->xdg_toplevel, &xdg_toplevel_listener, state);
-    xdg_toplevel_set_app_id(state->xdg_toplevel, "one.alynx.showmethekey");
+    xdg_toplevel_set_app_id(state->xdg_toplevel, "keypop");
     xdg_toplevel_set_title(state->xdg_toplevel, "Show Me The Key");
     wl_surface_commit(state->surface);
 }

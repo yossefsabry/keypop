@@ -8,7 +8,7 @@ LIBS = $(shell pkg-config --libs $(PKGS)) -lm
 
 SRC = src/main.c src/input.c src/shm.c src/buffer.c src/keys.c src/draw.c src/wl_setup.c src/window.c src/tray.c xdg-shell-protocol.c
 OBJ = $(SRC:.c=.o)
-TARGET = showmethekey
+TARGET = keypop
 
 all: $(TARGET)
 
