@@ -1,0 +1,17 @@
+# .gitignore
+
+# Build artifacts
+*.o
+keypop
+build/
+
+# Generated Wayland protocol files
+xdg-shell-protocol.c
+xdg-shell-client-protocol.h
+xdg-shell-protocol.o
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*~
