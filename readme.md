@@ -8,20 +8,23 @@ A simple key display application for Wayland compositors like Hyprland.
 - Supports special keys (Enter, Tab, Ctrl, Alt, etc.)
 - Optimized for low memory usage
 
-## Build
+## Install
+```bash
+## https://aur.archlinux.org/packages/keypop
+yay -S keypop
+```
 
+## Build
 ```bash
 make
 ```
 
 ## Install
-
 ```bash
 sudo make install
 ```
 
 ## Run
-
 Requires access to input devices. Add your user to the `input` group:
 
 ```bash
@@ -50,9 +53,7 @@ Options:
 - `-h`: Show help
 
 ## Hyprland Configuration
-
 Add to `~/.config/hypr/hyprland.conf`:
-
 ```conf
 # Keypop - always on top, no effects
 windowrulev2 = float, class:^(keypop)$
@@ -65,13 +66,11 @@ windowrulev2 = move 100%-820 100%-100, class:^(keypop)$
 ```
 
 ## Exit
-
 - Press `Ctrl+C` in terminal
 - Or kill the process: `pkill keypop`
 - Or close via Hyprland: `hyprctl dispatch killactive` with window focused
 
 ## Dependencies
-
 - wayland-client
 - wayland-protocols
 - cairo
