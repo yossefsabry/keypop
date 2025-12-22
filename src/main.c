@@ -17,9 +17,9 @@
 #include "input.h"
 
 // Configuration
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 100
-#define PADDING 20
+#define WINDOW_WIDTH 840
+#define WINDOW_HEIGHT 130
+#define PADDING 10
 #define MAX_DISPLAY_LEN 256
 #define HIDE_TIMEOUT_MS 2000
 
@@ -118,13 +118,13 @@ static void redraw(struct client_state *state) {
     cairo_arc(cr, r, WINDOW_HEIGHT - r, r, M_PI/2, M_PI);
     cairo_arc(cr, r, r, r, M_PI, 3*M_PI/2);
     cairo_close_path(cr);
-    cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.80);
+    cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.60);
     cairo_fill(cr);
     
     // Draw text if buffer has content
     if (state->display_len > 0) {
-        cairo_select_font_face(cr, "Monospace", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-        cairo_set_font_size(cr, 60);
+        cairo_select_font_face(cr, "Monospace", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+        cairo_set_font_size(cr, 65);
         cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
         
         cairo_text_extents_t extents;
