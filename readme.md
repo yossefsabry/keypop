@@ -1,6 +1,7 @@
 # Keypop (Wayland)
-
 A simple key display application for Wayland compositors like Hyprland.
+
+![b1](./public/b1.png)
 
 ## Features
 - Shows typed keys on screen in real-time
@@ -12,6 +13,20 @@ A simple key display application for Wayland compositors like Hyprland.
 ```bash
 ## https://aur.archlinux.org/packages/keypop
 yay -S keypop
+```
+
+## Hyprland Configuration
+Add to `~/.config/hypr/hyprland.conf`:
+```conf
+# Keypop - always on top, no effects
+windowrulev2 = float, class:^(keypop)$
+windowrulev2 = pin, class:^(keypop)$
+windowrulev2 = noblur, class:^(keypop)$
+windowrulev2 = noshadow, class:^(keypop)$
+windowrulev2 = noborder, class:^(keypop)$
+windowrulev2 = nofocus, class:^(keypop)$
+windowrulev2 = move 100%-820 100%-100, class:^(keypop)$
+windowrulev2 = nodim, class:^(keypop)$
 ```
 
 ## Build
@@ -52,18 +67,6 @@ Options:
 - `-o <opacity>`: Background opacity (0.0 - 1.0)
 - `-h`: Show help
 
-## Hyprland Configuration
-Add to `~/.config/hypr/hyprland.conf`:
-```conf
-# Keypop - always on top, no effects
-windowrulev2 = float, class:^(keypop)$
-windowrulev2 = pin, class:^(keypop)$
-windowrulev2 = noblur, class:^(keypop)$
-windowrulev2 = noshadow, class:^(keypop)$
-windowrulev2 = noborder, class:^(keypop)$
-windowrulev2 = nofocus, class:^(keypop)$
-windowrulev2 = move 100%-820 100%-100, class:^(keypop)$
-```
 
 ## Exit
 - Press `Ctrl+C` in terminal
