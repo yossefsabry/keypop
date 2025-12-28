@@ -12,7 +12,7 @@ A simple key display application for Wayland compositors like Hyprland.
 ## Install
 ```bash
 ## https://aur.archlinux.org/packages/keypop-git
-yay -S keypop
+yay -S keypop-git
 ```
 
 ## Hyprland Configuration
